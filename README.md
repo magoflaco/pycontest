@@ -70,7 +70,11 @@ El proyecto cuenta con una atención meticulosa a los detalles visuales. El cód
 
 <details>
 <summary>Ver Imágenes de la Plataforma</summary>
+
+   
 Mira la plataforma [aquí](https://pycontest.pages.dev/)
+
+
 </details>
 
 ---
