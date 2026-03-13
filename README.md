@@ -1,6 +1,6 @@
 # PyContest 🐍
 
-Plataforma elegante y moderna para organizar y participar en concursos de programación en Python, con evaluación automática impulsada por Inteligencia Artificial (Qwen3-Coder).
+Plataforma elegante y moderna para organizar y participar en concursos de programación en Python, con evaluación automática impulsada por Inteligencia Artificial (Qwen3-Coder). Puedes unirte en [https://pycontest.pages.dev/](https://pycontest.pages.dev/)
 
 ## 🌟 Características
 
@@ -70,7 +70,7 @@ El proyecto cuenta con una atención meticulosa a los detalles visuales. El cód
 
 <details>
 <summary>Ver Imágenes de la Plataforma</summary>
-(Agrega aquí tus capturas de pantalla de la carpeta `frontend/public/` o tu entorno en vivo para impresionar a tus visitantes).
+Mira la plataforma [aquí](https://pycontest.pages.dev/)
 </details>
 
 ---
