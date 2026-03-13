@@ -1,0 +1,110 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String   @id @default(uuid())
+  email         String   @unique
+  username      String   @unique
+  passwordHash  String
+  name          String
+  avatar        String   @default("") @db.Text
+  role          String   @default("participant") // "participant" | "organizer" | "both"
+  emailVerified Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  otps              OTP[]
+  organizedContests Contest[]        @relation("OrganizerContests")
+  contestMembers    ContestMember[]
+  submissions       Submission[]
+}
+
+model OTP {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  code      String
+  type      String   // "verify_email" | "reset_password"
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model Contest {
+  id          String   @id @default(uuid())
+  name        String
+  description String
+  slug        String   @unique
+  inviteToken String   @unique
+  organizer   User     @relation("OrganizerContests", fields: [organizerId], references: [id])
+  organizerId String
+  startAt     DateTime?
+  endAt       DateTime?
+  durationMin Int      @default(90)
+  isActive    Boolean  @default(true)
+  isPublic    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  problems ContestProblem[]
+  members  ContestMember[]
+}
+
+model ContestMember {
+  id        String   @id @default(uuid())
+  contest   Contest  @relation(fields: [contestId], references: [id], onDelete: Cascade)
+  contestId String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  joinedAt  DateTime @default(now())
+  role      String   @default("participant") // "participant" | "admin"
+
+  @@unique([contestId, userId])
+}
+
+model ContestProblem {
+  id          String   @id @default(uuid())
+  contest     Contest  @relation(fields: [contestId], references: [id], onDelete: Cascade)
+  contestId   String
+  title       String
+  slug        String
+  statement   String   @db.Text
+  difficulty  String   @default("medium") // "easy" | "medium" | "hard"
+  points      Int      @default(100)
+  exampleIn   String   @default("")
+  exampleOut  String   @default("")
+  aiNotes     String   @default("")
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  submissions Submission[]
+
+  @@unique([contestId, slug])
+}
+
+model Submission {
+  id          String   @id @default(uuid())
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      String
+  problem     ContestProblem @relation(fields: [problemId], references: [id], onDelete: Cascade)
+  problemId   String
+  contestId   String
+  code        String   @db.Text
+  codeHash    String   @default("")
+  verdict     String   // "Accepted" | "Wrong Answer" | "Partial Credit" | "Syntax Error" | "Pending"
+  score       Int      @default(0)
+  maxScore    Int      @default(100)
+  elapsedSec  Int      @default(0)
+  aiFeedback  String   @db.Text @default("")
+  aiBreakdown Json?
+  createdAt   DateTime @default(now())
+
+  @@index([problemId, codeHash])
+}
